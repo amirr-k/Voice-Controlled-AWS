@@ -22,3 +22,7 @@
   transform: scale(1.1);
   transition: transform 0.2s;
 }
+.microphone:active {
+  transform: scale(0.7);
+  transition: transform 0.2s;
+}
