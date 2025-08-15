@@ -9,6 +9,11 @@ const Recorder = () => {
   const mediaRecorderRef = useRef(null);
   const streamRef = useRef(null);
 
+  const getSupportedMimeType = () => {
+    const types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/wav'];
+    return types.find(type => MediaRecorder.isTypeSupported(type)) || '';
+  };
+
   const startRecording = async () => {
     try {
       setIsRecording(true);
@@ -25,9 +30,10 @@ const Recorder = () => {
       streamRef.current = stream;
       
       // Create MediaRecorder for recording audio
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus'
-      });
+      const mimeType = getSupportedMimeType();
+      const mediaRecorder = mimeType 
+        ? new MediaRecorder(stream, { mimeType })
+        : new MediaRecorder(stream);
       
       mediaRecorderRef.current = mediaRecorder;
       
@@ -41,7 +47,7 @@ const Recorder = () => {
       };
       
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const audioBlob = new Blob(audioChunks, { type: mimeType || 'audio/wav' });
         setAudioBlob(audioBlob);
         setIsRecording(false);
         
@@ -90,13 +96,19 @@ const Recorder = () => {
     try {
       // Create FormData for file upload
       const formData = new FormData();
-      formData.append('audio', audioBlob, 'recording.webm');
+      const fileExt = audioBlob.type.includes('webm') ? 'webm' : 
+                     audioBlob.type.includes('mp4') ? 'mp4' : 'wav';
+      formData.append('audio', audioBlob, `recording.${fileExt}`);
       
       // Need to replace this with actual API endpoint
       // TO DO
       const API_ENDPOINT = '';
       
       console.log('Uploading audio blob of size:', audioBlob.size);
+      
+      if (!API_ENDPOINT) {
+        throw new Error('API endpoint not configured');
+      }
       
       const response = await fetch(API_ENDPOINT, {
         method: 'POST',
@@ -114,7 +126,7 @@ const Recorder = () => {
     } catch (error) {
       console.error('Upload error:', error);
       // TO DO: Handle upload error -- still need to create the backend
-      // console.log('Backend not functioning - audio blob created successfully');
+      console.log('Backend not functioning - audio blob created successfully');
     } finally {
       setIsProcessing(false);
     }
