@@ -1,28 +1,192 @@
-.recorder {
-    display: inline-flex;          
-    align-items: center;           
-    justify-content: center;       
-    width: 300px;                  
-    height: 300px;
-    border-radius: 50%;          
-    border: none;                  
-    background-color: #ffffff;     
-    color: #fff;                  
-    cursor: pointer;
-    font-size: 16px;    
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+/* Recorder Container */
+.recorder-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
 }
+
+/* Main Recorder Button */
+.recorder {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background-color: white;
+  border: 3px solid #e0e0e0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  outline: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.recorder:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  border-color: #4CAF50;
+}
+
+.recorder:active {
+  transform: scale(0.95);
+}
+
+/* Recording State */
+.recorder.recording {
+  background-color: #ffebee;
+  border-color: #f44336;
+  animation: pulse-red 1.5s infinite;
+}
+
+.recorder.recording:hover {
+  border-color: #d32f2f;
+}
+
+/* Processing State */
+.recorder.processing {
+  background-color: #e3f2fd;
+  border-color: #2196F3;
+  cursor: not-allowed;
+  animation: pulse-blue 2s infinite;
+}
+
+/* Disabled State */
+.recorder:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.recorder:disabled:hover {
+  transform: none;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Microphone Icon */
 .microphone {
   width: 175px;
   height: 145px;
   object-fit: contain;
+  transition: all 0.3s ease;
 }
-.microphone:hover {
-  cursor: pointer;
+
+.recorder:hover .microphone {
   transform: scale(1.1);
-  transition: transform 0.2s;
 }
-.microphone:active {
-  transform: scale(0.7);
-  transition: transform 0.2s;
+
+.recorder.recording .microphone {
+  filter: brightness(0.8) sepia(1) hue-rotate(320deg) saturate(2);
+}
+
+.recorder.processing .microphone {
+  filter: brightness(0.8) sepia(1) hue-rotate(200deg) saturate(2);
+  animation: rotate 2s linear infinite;
+}
+
+/* Status Text */
+.status-text {
+  text-align: center;
+  min-height: 24px;
+}
+
+.status-text p {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+}
+
+.recorder.recording + .status-text p {
+  color: #f44336;
+  animation: blink 1s infinite;
+}
+
+.recorder.processing + .status-text p {
+  color: #2196F3;
+}
+
+/* Audio Preview */
+.audio-preview {
+  margin-top: 20px;
+}
+
+.audio-preview audio {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Animations */
+@keyframes pulse-red {
+  0% {
+    box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(244, 67, 54, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(244, 67, 54, 0);
+  }
+}
+
+@keyframes pulse-blue {
+  0% {
+    box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(33, 150, 243, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(33, 150, 243, 0);
+  }
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .recorder {
+    width: 250px;
+    height: 250px;
+  }
+  
+  .microphone {
+    width: 140px;
+    height: 115px;
+  }
+  
+  .status-text p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .recorder {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .microphone {
+    width: 110px;
+    height: 90px;
+  }
 }
