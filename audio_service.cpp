@@ -59,8 +59,18 @@ class AudioService {
             if (!uploadS3(fileName)){
                 return "Error: Failed to upload audio to S3";
             }
-            return "Sucess, audio uploaded to S3";
+            return "Success, audio uploaded to S3";
         }
+
+int main() {
+    // Create audio service instance, can change directory name later
+    AudioService service("./audiofiles");
+
+    // Create HTTP server
+    httplib::Server server;
+
+    return 0;
+}
 
 
 
