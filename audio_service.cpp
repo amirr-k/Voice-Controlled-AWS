@@ -32,3 +32,20 @@ class AudioService {
             printf("Audio saved to %s\n", filePath.c_str());
             return true;
         }
+        bool uploadS3(string fileName){
+            string filePath = outputDirectory + "/" + fileName;
+            string s3Path = "s3://" + outputDirectory + "/" + fileName;
+            string command = "aws s3 cp" + filePath + " " + s3Path;
+            printf("Uploading audio to S3: %s\n", s3Path.c_str());
+
+            int result = system(command.c_str());
+            if (result == 0){
+                printf("Uploaded audio to S3: %s\n", s3Path.c_str());
+            }
+            else {
+                printf("Failed to upload audio to S3: %s\n", s3Path.c_str());
+                return false;
+            }
+            return true;
+        }
+        
