@@ -48,4 +48,18 @@ class AudioService {
             }
             return true;
         }
-        
+        string processAudio(vector <char> audioData){
+            time_t now = time(0);
+            char timestamp[20];
+            sprintf(timestamp, "%ld", now);
+            string fileName = "audio_" + string(timestamp) + ".wav";
+            if (!saveAudio(audioData, fileName)){
+                return "Error: Failed to save audio file";
+            }
+            if (!uploadS3(fileName)){
+                return "Error: Failed to upload audio to S3";
+            }
+        }
+
+
+
