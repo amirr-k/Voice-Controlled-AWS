@@ -92,11 +92,18 @@ class AudioService {
         // Ie. if this service is running on a different domain than the frontend
         // Like localhost:3000 and localhost:8080
         // This allows the frontend to make requests to the backend
+        // Note, also defines what request types are allowed
         httplib::Server::HandlerResponse handleCORS(const httplib::Request& req, httplib::Response& res) {
             res.set_header("Access-Control-Allow-Origin", "*");
             res.set_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
             res.set_header("Access-Control-Allow-Headers", "Content-Type");
             return httplib::Server::HandlerResponse::Unhandled;
+        }
+        // Need to include this for the OPTIONS request, we don't want to do anything with it
+        // CORS already verifies the request, we just need to return
+        // so brower can make options requests in the first place.
+        void handleOptions(const httplib::Request& req, httplib::Response& res) {
+            return;
         }
 
 
@@ -109,10 +116,20 @@ int main() {
     // Create HTTP server
     httplib::Server server;
 
-   
-     
-    
+    // Define API endpoints
+    server.Get("/health", healthCheck);
+    server.Post("/process", handleProcessAudio);
+    server.set_pre_routing_handler(handleCORS);
+    server.options("/*", handleOptions);
 
+    // Start the server
+    printf("Starting server on port 8080...\n");
+    // Error handling if server fails to start
+    if (!server.listen("0.0.0.0", 8080)) {
+        printf("Failed to start server\n");
+        return 1;
+    }
+    printf("Server started on port 8080\n");
     return 0;
 }
 
