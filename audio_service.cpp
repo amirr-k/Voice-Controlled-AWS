@@ -85,6 +85,20 @@ class AudioService {
             res.set_content(result, "text/plain");
             printf("Response: %s\n", result.c_str());
         }
+        // Handles CORS
+        // Notes to self:
+        // Cross-Origin Resource Sharing (CORS)
+        // Allows requests from different origins
+        // Ie. if this service is running on a different domain than the frontend
+        // Like localhost:3000 and localhost:8080
+        // This allows the frontend to make requests to the backend
+        httplib::Server::HandlerResponse handleCORS(const httplib::Request& req, httplib::Response& res) {
+            res.set_header("Access-Control-Allow-Origin", "*");
+            res.set_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+            res.set_header("Access-Control-Allow-Headers", "Content-Type");
+            return httplib::Server::HandlerResponse::Unhandled;
+        }
+
 
         
 
