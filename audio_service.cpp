@@ -59,6 +59,7 @@ class AudioService {
             if (!uploadS3(fileName)){
                 return "Error: Failed to upload audio to S3";
             }
+            return fileName;
         }
 
 
