@@ -61,13 +61,43 @@ class AudioService {
             }
             return "Success, audio uploaded to S3";
         }
+        AudioService* globalService = nullptr;
+        void healthCheck(const httplib::Request& req, httplib::Response& res){
+            res.set_content("C++ Audio Service running", "text/plain");
+            printf("Health check requested\n");
+        }
+        void handleProcessAudio(const httplib::Request& req, httplib::Response& res){
+            printf("Audio processing requested\n");
+            auto file = req.get_file_value("audio");
+            if (!file){
+                res.status = 400;
+                res.set_content("No audio file provided", "text/plain");
+                printf("Error: No audio file provided\n");
+                return;
+            }
+            printf("Received audio file: %s (%d bytes)\n", 
+            file->filename.c_str(), (int)file->content.size());
+            vector<char> audioData;
+            for (int i = 0; i < file->content.size(); ++i){
+                audioData.push_back(file->content[i]);
+            }
+            string result = globalService->processAudio(audioData);
+            res.set_content(result, "text/plain");
+            printf("Response: %s\n", result.c_str());
+        }
+
+        
 
 int main() {
     // Create audio service instance, can change directory name later
     AudioService service("./audiofiles");
-
+    globalService = &service;
     // Create HTTP server
     httplib::Server server;
+
+   
+     
+    
 
     return 0;
 }
