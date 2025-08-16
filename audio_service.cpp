@@ -34,8 +34,8 @@ class AudioService {
         }
         bool uploadS3(string fileName){
             string filePath = outputDirectory + "/" + fileName;
-            string s3Path = "s3://" + outputDirectory + "/" + fileName;
-            string command = "aws s3 cp" + filePath + " " + s3Path;
+            string s3Path = "s3://voice-recordings-bucket/" + fileName;    
+            string command = "aws s3 cp " + filePath + " " + s3Path;
             printf("Uploading audio to S3: %s\n", s3Path.c_str());
 
             int result = system(command.c_str());
@@ -105,6 +105,7 @@ class AudioService {
         void handleOptions(const httplib::Request& req, httplib::Response& res) {
             return;
         }
+};
 
 
         
@@ -120,7 +121,7 @@ int main() {
     server.Get("/health", healthCheck);
     server.Post("/process", handleProcessAudio);
     server.set_pre_routing_handler(handleCORS);
-    server.options("/*", handleOptions);
+    server.Options("/*", handleOptions);
 
     // Start the server
     printf("Starting server on port 8080...\n");
