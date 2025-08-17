@@ -11,6 +11,7 @@ WORKDIR /app
 COPY audio_service.cpp .
 COPY CMakeLists.txt .
 
+RUN wget -O httplib.h https://raw.githubusercontent.com/yhirose/cpp-httplib/master/httplib.h
 
 RUN mkdir build && cd build && \
     cmake .. && \
