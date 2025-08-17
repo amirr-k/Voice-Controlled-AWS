@@ -61,54 +61,62 @@ class AudioService {
             }
             return "Success, audio uploaded to S3";
         }
-        AudioService* globalService = nullptr;
-        void healthCheck(const httplib::Request& req, httplib::Response& res){
-            res.set_content("C++ Audio Service running", "text/plain");
-            printf("Health check requested\n");
-        }
-        void handleProcessAudio(const httplib::Request& req, httplib::Response& res){
-            printf("Audio processing requested\n");
-            auto file = req.get_file_value("audio");
-            if (!file){
-                res.status = 400;
-                res.set_content("No audio file provided", "text/plain");
-                printf("Error: No audio file provided\n");
-                return;
-            }
-            printf("Received audio file: %s (%d bytes)\n", 
-            file->filename.c_str(), (int)file->content.size());
-            vector<char> audioData;
-            for (int i = 0; i < file->content.size(); ++i){
-                audioData.push_back(file->content[i]);
-            }
-            string result = globalService->processAudio(audioData);
-            res.set_content(result, "text/plain");
-            printf("Response: %s\n", result.c_str());
-        }
-        // Handles CORS
-        // Notes to self:
-        // Cross-Origin Resource Sharing (CORS)
-        // Allows requests from different origins
-        // Ie. if this service is running on a different domain than the frontend
-        // Like localhost:3000 and localhost:8080
-        // This allows the frontend to make requests to the backend
-        // Note, also defines what request types are allowed
-        httplib::Server::HandlerResponse handleCORS(const httplib::Request& req, httplib::Response& res) {
-            res.set_header("Access-Control-Allow-Origin", "*");
-            res.set_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-            res.set_header("Access-Control-Allow-Headers", "Content-Type");
-            return httplib::Server::HandlerResponse::Unhandled;
-        }
-        // Need to include this for the OPTIONS request, we don't want to do anything with it
-        // CORS already verifies the request, we just need to return
-        // so brower can make options requests in the first place.
-        void handleOptions(const httplib::Request& req, httplib::Response& res) {
-            return;
-        }
+        
+       
 };
 
+// Global service instance
+AudioService* globalService = nullptr;
 
-        
+// Health check endpoint
+void healthCheck(const httplib::Request& req, httplib::Response& res){
+    res.set_content("C++ Audio Service running", "text/plain");
+    printf("Health check requested\n");
+}
+
+// Audio processing endpoint
+void handleProcessAudio(const httplib::Request& req, httplib::Response& res) {
+    printf("Audio processing requested\n");
+    auto file = req.get_file_value("audio");
+    if (!file) {
+        res.status = 400;
+        res.set_content("No audio file provided", "text/plain");
+        printf("Error: No audio file provided\n");
+        return;
+    }
+    printf("Received audio file: %s (%d bytes)\n",
+           file->filename.c_str(), (int)file->content.size());
+    vector<char> audioData;
+    for (int i = 0; i < file->content.size(); ++i) {
+        audioData.push_back(file->content[i]);
+    }
+    string result = globalService->processAudio(audioData);
+    res.set_content(result, "text/plain");
+    printf("Response: %s\n", result.c_str());
+}
+
+// Handles CORS
+// Notes to self:
+// Cross-Origin Resource Sharing (CORS)
+// Allows requests from different origins
+// Ie. if this service is running on a different domain than the frontend
+// Like localhost:3000 and localhost:8080
+// This allows the frontend to make requests to the backend
+// Note, also defines what request types are allowed
+httplib::Server::HandlerResponse handleCORS(const httplib::Request& req, httplib::Response& res) {
+    res.set_header("Access-Control-Allow-Origin", "*");
+    res.set_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.set_header("Access-Control-Allow-Headers", "Content-Type");
+    return httplib::Server::HandlerResponse::Unhandled;
+}
+
+// Need to include this for the OPTIONS request, we don't want to do anything with it
+// CORS already verifies the request, we just need to return
+// so browser can make options requests in the first place.
+void handleOptions(const httplib::Request& req, httplib::Response& res) {
+    return;
+}
+
 
 int main() {
     // Create audio service instance, can change directory name later
