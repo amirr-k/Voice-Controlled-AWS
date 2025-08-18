@@ -102,13 +102,9 @@ const Recorder = () => {
       
       // Need to replace this with actual API endpoint
       // TO DO
-      const API_ENDPOINT = '';
+      const API_ENDPOINT = 'http://localhost:8080/process';
       
       console.log('Uploading audio blob of size:', audioBlob.size);
-      
-      if (!API_ENDPOINT) {
-        throw new Error('API endpoint not configured');
-      }
       
       const response = await fetch(API_ENDPOINT, {
         method: 'POST',

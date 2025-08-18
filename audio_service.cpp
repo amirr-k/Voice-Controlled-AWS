@@ -75,19 +75,32 @@ void healthCheck(const httplib::Request& req, httplib::Response& res){
 // Audio processing endpoint
 void handleProcessAudio(const httplib::Request& req, httplib::Response& res) {
     printf("Audio processing requested\n");
-    auto file = req.get_file_value("audio");
-    if (!file) {
+    
+    // Check if the request has multipart content
+    if (!req.is_multipart_form_data()) {
+        res.status = 400;
+        res.set_content("Request is not multipart form data", "text/plain");
+        printf("Error: Request is not multipart form data\n");
+        return;
+    }
+    
+    // Get the audio file from multipart data
+    auto file = req.form.get_file("audio");
+    if (file.filename.empty()) {
         res.status = 400;
         res.set_content("No audio file provided", "text/plain");
         printf("Error: No audio file provided\n");
         return;
     }
+    
     printf("Received audio file: %s (%d bytes)\n",
-           file->filename.c_str(), (int)file->content.size());
+           file.filename.c_str(), (int)file.content.size());
+    
     vector<char> audioData;
-    for (int i = 0; i < file->content.size(); ++i) {
-        audioData.push_back(file->content[i]);
+    for (int i = 0; i < file.content.size(); ++i) {
+        audioData.push_back(file.content[i]);
     }
+    
     string result = globalService->processAudio(audioData);
     res.set_content(result, "text/plain");
     printf("Response: %s\n", result.c_str());
@@ -127,7 +140,7 @@ int main() {
     server.Get("/health", healthCheck);
     server.Post("/process", handleProcessAudio);
     server.set_pre_routing_handler(handleCORS);
-    server.Options("/*", handleOptions);
+    server.Options(".*", handleOptions);
 
     // Start the server
     printf("Starting server on port 8080...\n");
