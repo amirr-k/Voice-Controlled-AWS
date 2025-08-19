@@ -34,7 +34,7 @@ class AudioService {
         }
         bool uploadS3(string fileName){
             string filePath = outputDirectory + "/" + fileName;
-            string s3Path = "s3://voice-recordings-bucket/" + fileName;    
+            string s3Path = "s3://voice-recordings-bucket-amirkiadi-2025/" + fileName;  
             string command = "aws s3 cp " + filePath + " " + s3Path;
             printf("Uploading audio to S3: %s\n", s3Path.c_str());
 
