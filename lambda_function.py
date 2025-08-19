@@ -8,15 +8,20 @@ def lambda_handler(event, context):
     try:
         if event.get("isBase64Encoded"):
             #Convert to binary
-            audio_data = base64.b64decode(event["body"])
+            audioData = base64.b64decode(event["body"])
         else:
-            body = event["body"]
+            audioData = event["body"]
             #Already in binary format
     
     #Send audio to C++ service
     #Need to make this dynamic later
-    cppServiceUrl = "http://localhost:8080/process"
+        cppServiceUrl = "http://localhost:8080/process"
 
-    response = response.post(cppServiceUrl, files = {"audio": ("record.wav", body, "audio/wav")})
+        response = requests.post(cppServiceUrl, files = {"audio": ("record.wav", audioData, "audio/wav")})
 
-    
+        return {'statusCode': 200,'headers': {'Access-Control-Allow-Origin': '*','Content-Type': 'application/json'},
+            'body': json.dumps({'message': response.text,'status': 'success'})}
+
+        
+    except Exception as e:
+        return {'statusCode': 500,'body': json.dumps({'error': str(e)})}
