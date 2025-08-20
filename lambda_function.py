@@ -3,6 +3,8 @@ import boto3
 import requests
 import base64
 
+s3_client = boto3.client('s3')
+
 def lambda_handler(event, context):
     #Get audio from API Gateway
     try:
@@ -13,15 +15,28 @@ def lambda_handler(event, context):
             audioData = event["body"]
             #Already in binary format
     
-    #Send audio to C++ service
-    #Need to make this dynamic later
-        cppServiceUrl = "http://localhost:8080/process"
+        timestamp = int(datetime.now().timestamp())
+        filename = f"audio_{timestamp}.wav"
 
-        response = requests.post(cppServiceUrl, files = {"audio": ("record.wav", audioData, "audio/wav")})
-
-        return {'statusCode': 200,'headers': {'Access-Control-Allow-Origin': '*','Content-Type': 'application/json'},
-            'body': json.dumps({'message': response.text,'status': 'success'})}
+        s3_client.put_object(
+                Bucket='voice-recordings-bucket-amirkiadi-2025',
+                Key=filename,
+                Body=audio_data,
+                ContentType='audio/wav'
+            )
+        
+        return {
+                'statusCode': 200,
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type': 'application/json'
+                },
+                'body': json.dumps({
+                    'message': f'Audio uploaded successfully: {filename}',
+                    'status': 'success'
+                })
+            }
 
         
     except Exception as e:
-        return {'statusCode': 500,'body': json.dumps({'error': str(e)})}
+        return {'statusCode': 500,'headers': {'Access-Control-Allow-Origin': '*'},'body': json.dumps({'error': str(e)})}
