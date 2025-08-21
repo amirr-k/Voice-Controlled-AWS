@@ -100,7 +100,7 @@ const Recorder = () => {
                      audioBlob.type.includes('mp4') ? 'mp4' : 'wav';
       formData.append('audio', audioBlob, `recording.${fileExt}`);
       
-      const API_ENDPOINT = 'https://oo5yo9s128.execute-api.us-east-2.amazonaws.com/test';
+      const API_ENDPOINT = 'https://oo5yo9s128.execute-api.us-east-2.amazonaws.com/test/upload-audio';
       
       console.log('Uploading audio blob of size:', audioBlob.size);
       
