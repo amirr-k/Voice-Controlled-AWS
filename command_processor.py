@@ -41,7 +41,7 @@ def lambda_handler(event, context):
 
 def startServer():
     #Start EC2 instance
-    instanceId = "IF THIS IF FAILING YOU FORGOT TO REPLACE ME!"
+    instanceId = "i-0fc1b4006599b6d19"
     try:
         ec2.start_instances(InstanceIds=[instanceId])
         return "Server started"
@@ -50,7 +50,7 @@ def startServer():
 
 def stopServer():
     #Stop EC2 instance
-    instanceId = "IF THIS IF FAILING YOU FORGOT TO REPLACE ME!"
+    instanceId = "i-0fc1b4006599b6d19"
     try:
         ec2.stop_instances(InstanceIds=[instanceId])
         return "Server stopped"
