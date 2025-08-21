@@ -16,16 +16,16 @@ def lambda_handler(event, context):
             return {'statusCode': 200, 'body': 'Not a transcription file'}
         
         response = s3.get_object(Bucket=bucket, Key=key)
-        transcription_data = json.loads(response['Body'].read())
+        transcriptionData = json.loads(response['Body'].read())
 
         #Extract transcript
-        transcript = transcription_data['results']['transcripts'][0]['transcript'].lower()
+        transcript = transcriptionData['results']['transcripts'][0]['transcript'].lower()
 
         #Parsing commands
         if 'start' in transcript and 'server' in transcript:
-            result = start_server()
+            result = startServer()
         elif 'stop' in transcript and 'server' in transcript:
-            result = stop_server()
+            result = stopServer()
         else:
             result = f"Command not recognized: {transcript}"
         
@@ -33,3 +33,26 @@ def lambda_handler(event, context):
             'statusCode': 200,
             'body': json.dumps({'command': transcript, 'result': result})
         }
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'error': str(e)})
+        }
+
+def startServer():
+    #Start EC2 instance
+    instanceId = "IF THIS IF FAILING YOU FORGOT TO REPLACE ME!"
+    try:
+        ec2.start_instances(InstanceIds=[instanceId])
+        return "Server started"
+    except Exception as e:
+        return f"Error starting server: {str(e)}"
+
+def stopServer():
+    #Stop EC2 instance
+    instanceId = "IF THIS IF FAILING YOU FORGOT TO REPLACE ME!"
+    try:
+        ec2.stop_instances(InstanceIds=[instanceId])
+        return "Server stopped"
+    except Exception as e:
+        return f"Error stopping server: {str(e)}"
