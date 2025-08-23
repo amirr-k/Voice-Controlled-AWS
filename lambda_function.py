@@ -6,14 +6,35 @@ from datetime import datetime
 s3_client = boto3.client('s3')
 
 def lambda_handler(event, context):
-    #Get audio from API Gateway
     try:
-        # Get audio from API Gateway
+        #Get audio from API Gateway
         if event.get("isBase64Encoded"):
             #Convert to binary
-            audioData = base64.b64decode(event["body"])
+            body = base64.b64decode(event["body"])
         else:
-            audioData = event["body"]
+            body = event["body"].encode() if isinstance(event["body"], str) else event["body"]
+        
+        #Extract actual audio from multipart form data
+        contentType = event.get('headers', {}).get('content-type', '') or event.get('headers', {}).get('Content-Type', '')
+        
+        if 'multipart/form-data' in contentType:
+            boundary = contentType.split('boundary=')[1].encode()
+            parts = body.split(b'--' + boundary)
+            
+            audioData = None
+            for part in parts:
+                if b'name="audio"' in part:
+                    headerEnd = part.find(b'\r\n\r\n')
+                    if headerEnd != -1:
+                        audioData = part[headerEnd + 4:]
+                        if audioData.endswith(b'\r\n'):
+                            audioData = audioData[:-2]
+                        break
+            
+            if not audioData:
+                audioData = body
+        else:
+            audioData = body
             #Already in binary format
     
         timestamp = int(datetime.now().timestamp())
