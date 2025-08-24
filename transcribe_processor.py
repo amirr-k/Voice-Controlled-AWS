@@ -2,6 +2,11 @@ import json
 import boto3
 import urllib.parse
 
+#NOTES
+# TOFIX -- FIX THE FORMAT OF THE AUDIO FILES
+# Also fix the issue with transcrube not being able to handle the audio files
+
+
 transcribe = boto3.client('transcribe')
 s3 = boto3.client('s3')
 
