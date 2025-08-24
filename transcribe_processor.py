@@ -5,6 +5,7 @@ import urllib.parse
 #NOTES
 # TOFIX -- FIX THE FORMAT OF THE AUDIO FILES
 # Also fix the issue with transcrube not being able to handle the audio files
+# Also need to resolve API gateway issue
 
 
 transcribe = boto3.client('transcribe')
