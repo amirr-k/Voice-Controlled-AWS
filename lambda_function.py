@@ -6,6 +6,16 @@ from datetime import datetime
 s3_client = boto3.client('s3')
 
 def lambda_handler(event, context):
+    if event["httpMethod"] == "OPTIONS":
+        return {
+            "statusCode": 200,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type"
+            },
+            "body": json.dumps("CORS preflight OK")
+        }
     try:
         #Get audio from API Gateway
         if event.get("isBase64Encoded"):
