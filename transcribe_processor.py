@@ -24,7 +24,7 @@ def lambda_handler(event, context):
         transcribe.start_transcription_job(
             TranscriptionJobName=jobName,
             Media={'MediaFileUri': jobURI},
-            MediaFormat='wav',
+            MediaFormat='webm',
             LanguageCode='en-US',
             OutputBucketName=bucket
         )

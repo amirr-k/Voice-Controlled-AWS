@@ -38,13 +38,13 @@ def lambda_handler(event, context):
             #Already in binary format
     
         timestamp = int(datetime.now().timestamp())
-        filename = f"audio_{timestamp}.wav"
+        filename = f"audio_{timestamp}.webm"
 
         s3_client.put_object(
             Bucket='voice-recordings-bucket-amirkiadi-2025',
             Key=filename,
             Body=audioData,
-            ContentType='audio/wav'
+            ContentType='audio/webm'
         )
         
         return {

@@ -96,8 +96,7 @@ const Recorder = () => {
     try {
       // Create FormData for file upload
       const formData = new FormData();
-      const fileExt = audioBlob.type.includes('webm') ? 'webm' : 
-                     audioBlob.type.includes('mp4') ? 'mp4' : 'wav';
+      const fileExt = 'webm';
       formData.append('audio', audioBlob, `recording.${fileExt}`);
       
       const API_ENDPOINT = 'https://oo5yo9s128.execute-api.us-east-2.amazonaws.com/test/upload-audio';
