@@ -1,39 +1,32 @@
 import json
 import boto3
-import urllib.parse
-
-#NOTES
-# TOFIX -- FIX THE FORMAT OF THE AUDIO FILES
-# Also fix the issue with transcrube not being able to handle the audio files
-# Also need to resolve API gateway issue
-
 
 transcribe = boto3.client('transcribe')
-s3 = boto3.client('s3')
 
 def lambda_handler(event, context):
+    print("🚀 Lambda triggered by S3 event:", json.dumps(event))
+    
     try:
-        # Get bucket and key from S3 event
-        bucket = event['Records'][0]['s3']['bucket']['name']
-        key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'])
-
-        # Start transcription job
-        jobName = f"transcribe-{key.replace('/', '-').replace('.', '-')}"
-        jobURI = f"s3://{bucket}/{key}"
+        # extract bucket + key
+        record = event['Records'][0]
+        bucket = record['s3']['bucket']['name']
+        key = record['s3']['object']['key']
+        
+        print(f"Processing file s3://{bucket}/{key}")
+        
+        job_name = f"transcribe-{key.replace('.', '-')}"
+        job_uri = f"s3://{bucket}/{key}"
         
         transcribe.start_transcription_job(
-            TranscriptionJobName=jobName,
-            Media={'MediaFileUri': jobURI},
-            MediaFormat='webm',
+            TranscriptionJobName=job_name,
+            Media={'MediaFileUri': job_uri},
+            MediaFormat='mp4',  
             LanguageCode='en-US',
-            OutputBucketName=bucket
+            OutputBucketName='voice-recordings-bucket-amirkiadi-2025'
         )
-
-        return {
-            'statusCode': 200,
-            'body': json.dumps('Transcription job started')
-        }
-
+        
+        print(f"Started Transcribe job: {job_name}")
+        
     except Exception as e:
-        print(f"Error: {e}")
-        raise e
+        print(f"Error in transcribe-processor: {str(e)}")
+        raise

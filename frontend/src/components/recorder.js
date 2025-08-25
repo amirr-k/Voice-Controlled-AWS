@@ -10,8 +10,7 @@ const Recorder = () => {
   const streamRef = useRef(null);
 
   const getSupportedMimeType = () => {
-    const types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/wav'];
-    return types.find(type => MediaRecorder.isTypeSupported(type)) || '';
+    return 'audio/mp4';   // force Safari MP4
   };
 
   const startRecording = async () => {
@@ -47,7 +46,7 @@ const Recorder = () => {
       };
       
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunks, { type: mimeType || 'audio/wav' });
+        const audioBlob = new Blob(audioChunks, { type: mimeType || 'audio/mp4' });
         setAudioBlob(audioBlob);
         setIsRecording(false);
         
@@ -59,7 +58,7 @@ const Recorder = () => {
         console.log('Recording stopped, blob created:', audioBlob);
         // Still need to create the backend to upload the audio blob
         // TO DO
-        uploadAudio(audioBlob);
+        uploadAudio(audioBlob, 'mp4');
       };
       
       mediaRecorder.onerror = (event) => {
@@ -90,16 +89,15 @@ const Recorder = () => {
     }
   };
 
-  const uploadAudio = async (audioBlob) => {
+  const uploadAudio = async (audioBlob, fileExt) => {
     setIsProcessing(true);
     
     try {
       // Create FormData for file upload
       const formData = new FormData();
-      const fileExt = 'webm';
       formData.append('audio', audioBlob, `recording.${fileExt}`);
       
-      const API_ENDPOINT = 'https://oo5yo9s128.execute-api.us-east-2.amazonaws.com/test/upload-audio';
+      const API_ENDPOINT = 'https://odcbdy9auh.execute-api.us-east-1.amazonaws.com/test/upload-audio';
       
       console.log('Uploading audio blob of size:', audioBlob.size);
       
