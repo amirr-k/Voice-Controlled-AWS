@@ -56,8 +56,6 @@ const Recorder = () => {
         }
         
         console.log('Recording stopped, blob created:', audioBlob);
-        // Still need to create the backend to upload the audio blob
-        // TO DO
         uploadAudio(audioBlob, 'mp4');
       };
       
