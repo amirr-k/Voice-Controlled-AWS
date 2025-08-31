@@ -38,7 +38,6 @@ const Recorder = () => {
       
       // Collect audio data for the recording
       const audioChunks = [];
-      
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           audioChunks.push(event.data);
@@ -92,6 +91,7 @@ const Recorder = () => {
 
   const uploadAudio = async (audioBlob, fileExt) => {
     setIsProcessing(true);
+    
     try {
       // Create FormData for file upload
       const formData = new FormData();
