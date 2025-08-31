@@ -10,7 +10,7 @@ const Recorder = () => {
   const streamRef = useRef(null);
 
   const getSupportedMimeType = () => {
-    return 'audio/mp4';   // force Safari MP4
+    return 'audio/mp4';
   };
 
   const startRecording = async () => {
@@ -67,15 +67,18 @@ const Recorder = () => {
       // Start recording
       mediaRecorder.start(1000); // Collect data every 1 second
       
-    } catch (error) {
+    } 
+    catch (error) {
       console.error('Error starting recording:', error);
       setIsRecording(false);
       
       if (error.name === 'NotAllowedError') {
         alert('Microphone access denied. Please allow microphone access and try again.');
-      } else if (error.name === 'NotFoundError') {
+      } 
+      else if (error.name === 'NotFoundError') {
         alert('No microphone found. Please connect a microphone and try again.');
-      } else {
+      } 
+      else {
         alert('Error accessing microphone: ' + error.message);
       }
     }
@@ -89,14 +92,13 @@ const Recorder = () => {
 
   const uploadAudio = async (audioBlob, fileExt) => {
     setIsProcessing(true);
-    
     try {
       // Create FormData for file upload
       const formData = new FormData();
       formData.append('audio', audioBlob, `recording.${fileExt}`);
       
+      //API Endpoint for uploading audio blob
       const API_ENDPOINT = 'https://odcbdy9auh.execute-api.us-east-1.amazonaws.com/test/upload-audio';
-      
       console.log('Uploading audio blob of size:', audioBlob.size);
       
       const response = await fetch(API_ENDPOINT, {
@@ -107,16 +109,16 @@ const Recorder = () => {
       if (response.ok) {
         const result = await response.json();
         console.log('Upload successful:', result);
-        // Handle successful upload
-      } else {
+      } 
+      else {
         throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
       }
-      
-    } catch (error) {
+    } 
+    catch (error) {
       console.error('Upload error:', error);
-      // TO DO: Handle upload error -- still need to create the backend
       console.log('Backend not functioning - audio blob created successfully');
-    } finally {
+    } 
+    finally {
       setIsProcessing(false);
     }
   };
