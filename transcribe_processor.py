@@ -4,7 +4,7 @@ import boto3
 transcribe = boto3.client('transcribe')
 
 def lambda_handler(event, context):
-    print("🚀 Lambda triggered by S3 event:", json.dumps(event))
+    print("Lambda triggered by S3 event:", json.dumps(event))
     
     try:
         # extract bucket + key
